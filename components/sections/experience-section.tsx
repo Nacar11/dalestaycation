@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
     Waves,
     Palmtree,
@@ -39,7 +40,7 @@ const BASE_DELAY = 0.2
 
 // Type definitions
 interface FeaturedHighlight {
-    icon: LucideIcon
+    image: string
     title: string
     description: string
     accentColor: string
@@ -76,21 +77,21 @@ interface GalleryCategory {
 // Featured highlights - the "wow" factors with premium styling
 const featuredHighlights: FeaturedHighlight[] = [
     {
-        icon: Waves,
+        image: '/images/experience/pool-beach-access.png',
         title: 'Pool & Beach Access',
         description: 'Multiple resort pools and private beach',
         accentColor: '#1E4D5C',
         glowColor: 'rgba(30, 77, 92, 0.4)'
     },
     {
-        icon: Sparkles,
+        image: '/images/experience/luxury-amenities.png',
         title: 'Luxury Amenities',
         description: 'Fully equipped modern studio',
         accentColor: '#E07A5F',
         glowColor: 'rgba(224, 122, 95, 0.4)'
     },
     {
-        icon: Palmtree,
+        image: '/images/experience/resort-living.png',
         title: 'Resort Living',
         description: '11-hectare seaside community',
         accentColor: '#1E4D5C',
@@ -101,9 +102,9 @@ const featuredHighlights: FeaturedHighlight[] = [
 // All amenities for bento grid
 const allAmenities: Amenity[] = [
     { icon: Wifi, title: 'High-Speed WiFi', description: 'Work-ready internet', size: 'normal', category: 'essential' },
-    { icon: Waves, title: 'Pool Access', description: 'Multiple resort pools', size: 'featured', category: 'resort' },
+    { icon: Waves, title: 'Pool Access', description: 'Multiple resort pools', size: 'normal', category: 'resort' },
     { icon: Snowflake, title: 'Air Conditioning', description: 'Climate-controlled', size: 'normal', category: 'essential' },
-    { icon: Palmtree, title: 'Beach Access', description: 'Private beach nearby', size: 'featured', category: 'resort' },
+    { icon: Palmtree, title: 'Beach Access', description: 'Private beach nearby', size: 'normal', category: 'resort' },
     { icon: ChefHat, title: 'Full Kitchen', description: 'Cook your own meals', size: 'normal', category: 'essential' },
     { icon: Tv, title: 'Smart TV', description: 'Netflix & streaming', size: 'normal', category: 'entertainment' },
     { icon: Car, title: 'Free Parking', description: 'Secure on-site', size: 'normal', category: 'essential' },
@@ -334,13 +335,20 @@ export default function ExperienceSection() {
                                     gradientColor="rgba(30, 77, 92, 0.08)"
                                     gradientSize={200}
                                 >
-                                    {/* Premium Icon */}
-                                    <div className="mb-6">
-                                        <PremiumIcon
-                                            icon={highlight.icon}
-                                            accentColor={highlight.accentColor}
-                                            glowColor={highlight.glowColor}
-                                            size="large"
+                                    {/* Feature Image */}
+                                    <div className="mb-6 relative w-32 h-32 rounded-2xl overflow-hidden border-2 shadow-lg group-hover:scale-105 transition-transform duration-300"
+                                        style={{
+                                            borderColor: highlight.accentColor,
+                                            boxShadow: `0 8px 32px ${highlight.glowColor}`
+                                        }}
+                                    >
+                                        <Image
+                                            src={highlight.image}
+                                            alt={highlight.title}
+                                            fill
+                                            className="object-cover"
+                                            sizes="128px"
+                                            priority
                                         />
                                     </div>
 
@@ -469,11 +477,11 @@ export default function ExperienceSection() {
                                         className={cn(
                                             "group relative rounded-2xl overflow-hidden transition-all duration-500 cursor-default h-full",
                                             isFeatured
-                                                ? "bg-gradient-to-br from-ocean-deep via-ocean to-ocean-deep text-white col-span-2 row-span-2 p-8 border border-ocean/20"
+                                                ? "bg-white hover:!bg-ocean-deep text-ocean-deep hover:!text-white col-span-2 row-span-2 p-8 border-2 border-ocean/20 hover:border-white/30 shadow-lg hover:shadow-2xl"
                                                 : "bg-sand-light hover:bg-white text-ocean-deep p-6 border border-sand-dark/20 hover:border-ocean/20"
                                         )}
-                                        gradientColor={isFeatured ? "rgba(224, 122, 95, 0.2)" : "rgba(30, 77, 92, 0.1)"}
-                                        gradientSize={isFeatured ? 300 : 150}
+                                        gradientColor={isFeatured ? "transparent" : "rgba(30, 77, 92, 0.1)"}
+                                        gradientSize={isFeatured ? 0 : 150}
                                     >
                                         {/* Premium Icon Container */}
                                         <div className={cn(
@@ -482,10 +490,10 @@ export default function ExperienceSection() {
                                         )}>
                                             {isFeatured ? (
                                                 <div
-                                                    className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border-2 border-white/30"
-                                                    style={{ boxShadow: '0 8px 32px rgba(255,255,255,0.1)' }}
+                                                    className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-ocean/5 group-hover:bg-white/10 backdrop-blur-sm flex items-center justify-center border-2 border-ocean/20 group-hover:border-white/30 transition-all duration-500"
+                                                    style={{ boxShadow: '0 8px 32px rgba(30, 77, 92, 0.1)' }}
                                                 >
-                                                    <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" strokeWidth={1.5} aria-hidden="true" />
+                                                    <Icon className="w-8 h-8 md:w-10 md:h-10 text-ocean-deep group-hover:text-white transition-colors duration-500" strokeWidth={1.5} aria-hidden="true" />
                                                 </div>
                                             ) : (
                                                 <div
@@ -506,27 +514,22 @@ export default function ExperienceSection() {
                                         </div>
 
                                         {/* Content */}
-                                        <div className={isFeatured ? "space-y-2" : "space-y-1"}>
+                                        <div className={isFeatured ? "space-y-2 relative z-10" : "space-y-1"}>
                                             <h4 className={cn(
-                                                "font-semibold leading-tight",
+                                                "font-semibold leading-tight transition-colors duration-500",
                                                 isFeatured ? "text-xl md:text-2xl mb-2" : "text-sm md:text-base"
                                             )}>
                                                 {amenity.title}
                                             </h4>
                                             <p className={cn(
-                                                "leading-snug",
-                                                isFeatured ? "text-white/75 text-base" : "text-ocean/60 text-xs md:text-sm"
+                                                "leading-snug transition-colors duration-500",
+                                                isFeatured ? "text-ocean/70 group-hover:text-white/90 text-base" : "text-ocean/60 text-xs md:text-sm"
                                             )}>
                                                 {amenity.description}
                                             </p>
                                         </div>
 
-                                        {/* Featured Decorative Element */}
-                                        {isFeatured && (
-                                            <div className="absolute top-6 right-6 opacity-10">
-                                                <div className="w-24 h-24 rounded-full border-2 border-white" />
-                                            </div>
-                                        )}
+
                                     </MagicCard>
                                 </BlurFade>
                             )

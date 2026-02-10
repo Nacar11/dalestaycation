@@ -73,7 +73,8 @@ export default function HostSection() {
                                             alt="Dale Nacario - Property Owner"
                                             width={224}
                                             height={224}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover scale-150"
+                                            style={{ objectPosition: 'center 100%' }}
                                             priority
                                             quality={100}
                                         />
