@@ -27,7 +27,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { AIRBNB_LISTING_URL } from '@/lib/constants'
 import { BlurFade } from '@/components/ui/blur-fade'
 import { NumberTicker } from '@/components/ui/number-ticker'
-import { Marquee } from '@/components/ui/marquee'
 import { cn } from '@/lib/utils'
 
 const STAGGER_DELAY = 0.1
@@ -324,27 +323,14 @@ const resortAccessImages = [
     { src: '/images/gym/photo-gallery-gym-2.jpg', alt: 'Gym facilities and equipment' },
 ]
 
-const aboutCarouselImages = [
-    '/images/about/about-kitchen.jpg',
-    '/images/studio/photo-gallery-studio-1.jpg',
-    '/images/studio/photo-gallery-studio-4.jpg',
-    '/images/kitchen/photo-gallery-kitchen-1.jpg',
-    '/images/balcony/photo-gallery-balcony-1.jpg',
+const aboutGridImages = [
+    { src: '/images/studio/photo-gallery-studio-1.jpg', alt: 'Studio living space with floor-to-ceiling curtains' },
+    { src: '/images/studio/photo-gallery-studio-2.jpg', alt: 'Cozy queen bed with wooden headboard' },
+    { src: '/images/studio/photo-gallery-studio-4.jpg', alt: 'Studio interior with natural lighting' },
+    { src: '/images/studio/photo-gallery-studio-5.jpg', alt: 'Studio sleeping area' },
 ]
 
 export default function ExperienceSection() {
-    // About section carousel
-    const [aboutIndex, setAboutIndex] = useState(0)
-
-    const advanceAbout = useCallback(() => {
-        setAboutIndex((prev) => (prev + 1) % aboutCarouselImages.length)
-    }, [])
-
-    useEffect(() => {
-        const interval = setInterval(advanceAbout, 5000)
-        return () => clearInterval(interval)
-    }, [advanceAbout])
-
     // Resort access carousel
     const [resortIndex, setResortIndex] = useState(0)
     const [resortHovered, setResortHovered] = useState(false)
@@ -516,14 +502,12 @@ export default function ExperienceSection() {
                             {/* ── Left: Editorial Content ── */}
                             <div className="px-8 py-16 md:px-12 md:py-20 lg:px-16 lg:py-24 flex flex-col justify-center">
 
-                                {/* Location chain — ultra-fine tracking */}
                                 <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 0.5} inView>
                                     <p className="text-ocean/40 text-[10px] uppercase tracking-[0.4em] mb-10 font-medium">
                                         Dita Building&nbsp;·&nbsp;Tambuli Seaside Living&nbsp;·&nbsp;Lapu&#8209;Lapu City, Cebu
                                     </p>
                                 </BlurFade>
 
-                                {/* Split heading: italic ghost + solid bold */}
                                 <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
                                     <div className="mb-8 leading-none">
                                         <span className="block font-display italic text-ocean-deep/20 text-4xl md:text-5xl lg:text-[3.25rem] leading-[1.1] mb-1 select-none">
@@ -535,87 +519,83 @@ export default function ExperienceSection() {
                                     </div>
                                 </BlurFade>
 
-                                {/* Coral rule */}
                                 <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 1.5} inView>
                                     <div className="w-10 h-[2px] bg-coral mb-8" />
                                 </BlurFade>
 
-                                {/* Description */}
                                 <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 2} inView>
-                                    <p className="text-ocean/60 text-[15px] leading-relaxed max-w-sm mb-14">
-                                        A fully-furnished studio in Cebu&apos;s premier 11-hectare seaside resort
-                                        community. Resort-style amenities, personal touches, everything you need.
-                                    </p>
+                                    <div className="space-y-4 mb-12">
+                                        {[
+                                            {
+                                                highlight: "Fully furnished & move-in ready.",
+                                                detail: "Queen bed, full kitchen, smart TV, washer — nothing missing.",
+                                            },
+                                            {
+                                                highlight: "Resort pools, beach & gym.",
+                                                detail: "Step outside and it's all yours — no drive, no hassle.",
+                                            },
+                                            {
+                                                highlight: "Warm, private, and personal.",
+                                                detail: "Curated touches that make it feel like home.",
+                                            },
+                                        ].map((item, i) => (
+                                            <div key={i} className="flex gap-3 items-start">
+                                                <div className="w-1 h-1 rounded-full bg-coral mt-[9px] flex-shrink-0" />
+                                                <p className="text-[15px] leading-relaxed">
+                                                    <span className="text-ocean-deep font-semibold">{item.highlight} </span>
+                                                    <span className="text-ocean/50">{item.detail}</span>
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </BlurFade>
 
-                                {/* Editorial steps — large watermark numbers, no circles */}
-                                <div className="space-y-9">
+                                {/* Two arrival items — no numbers, clean editorial */}
+                                <div className="space-y-0">
                                     {[
                                         {
                                             title: "Arrive at Tambuli",
                                             body: "Head to the Dita Building entrance. Let the security guard know you're a booked guest for your scheduled stay.",
                                         },
                                         {
-                                            title: "Check In at the Lobby",
-                                            body: "Proceed to the front desk and sign in the log book. The host will verify your reservation details.",
-                                        },
-                                        {
                                             title: "Settle Into Your Suite",
                                             body: "Head up to your fully-furnished studio — it's open and ready for you. Make yourself at home!",
                                         },
-                                    ].map((step, i) => (
-                                        <BlurFade key={step.title} delay={BASE_DELAY + STAGGER_DELAY * (3 + i)} inView>
-                                            <div className="relative flex gap-6 group">
-                                                {/* Number column */}
-                                                <div className="relative flex-shrink-0 w-12 flex flex-col items-start">
-                                                    {/* Giant watermark */}
-                                                    <span className="absolute -top-4 -left-1 font-display text-[5rem] font-bold text-ocean-deep/[0.05] leading-none select-none pointer-events-none">
-                                                        {String(i + 1).padStart(2, '0')}
-                                                    </span>
-                                                    {/* Readable small number */}
-                                                    <span className="relative z-10 text-coral text-xs font-semibold tracking-[0.25em] mt-1">
-                                                        {String(i + 1).padStart(2, '0')}
-                                                    </span>
-                                                    {/* Vertical connector */}
-                                                    {i < 2 && (
-                                                        <div className="absolute top-5 left-[5px] w-px bg-ocean/10" style={{ height: 'calc(100% + 2.25rem)' }} />
-                                                    )}
-                                                </div>
-
-                                                {/* Content */}
-                                                <div>
-                                                    <h4 className="text-ocean-deep font-semibold text-sm mb-1.5 group-hover:text-coral transition-colors duration-300">
-                                                        {step.title}
-                                                    </h4>
-                                                    <p className="text-ocean/50 text-sm leading-relaxed">
-                                                        {step.body}
-                                                    </p>
-                                                </div>
+                                    ].map((item, i) => (
+                                        <BlurFade key={item.title} delay={BASE_DELAY + STAGGER_DELAY * (3 + i)} inView>
+                                            <div className={cn(
+                                                "py-7",
+                                                i > 0 && "border-t border-ocean/8"
+                                            )}>
+                                                <h4 className="text-ocean-deep font-semibold text-sm mb-2">
+                                                    {item.title}
+                                                </h4>
+                                                <p className="text-ocean/50 text-[15px] leading-relaxed max-w-xs">
+                                                    {item.body}
+                                                </p>
                                             </div>
                                         </BlurFade>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* ── Right: Full-bleed Carousel ── */}
+                            {/* ── Right: 2×2 Studio Image Grid ── */}
                             <div className="relative min-h-[460px] lg:min-h-0 overflow-hidden lg:rounded-l-2xl">
-                                {/* Slide strip */}
-                                <div
-                                    className="flex h-full transition-transform duration-700 ease-out"
-                                    style={{ transform: `translateX(-${aboutIndex * 100}%)` }}
-                                >
-                                    {aboutCarouselImages.map((src) => (
-                                        <img
-                                            key={src}
-                                            src={src}
-                                            alt=""
-                                            className="w-full h-full object-cover flex-shrink-0"
-                                        />
+                                <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1">
+                                    {aboutGridImages.map((img) => (
+                                        <div key={img.src} className="relative overflow-hidden">
+                                            <Image
+                                                src={img.src}
+                                                alt={img.alt}
+                                                fill
+                                                className="object-cover transition-transform duration-700 ease-out hover:scale-105"
+                                                sizes="(max-width: 1024px) 50vw, 25vw"
+                                            />
+                                        </div>
                                     ))}
                                 </div>
 
-
-                                {/* Room specs — dark gradient overlay over photo */}
+                                {/* Room specs — dark gradient overlay */}
                                 <div className="absolute bottom-0 left-0 right-0 pt-20 pb-8 px-8 md:px-10 bg-gradient-to-t from-ocean-deep/95 via-ocean-deep/60 to-transparent pointer-events-none">
                                     <p className="text-white/25 text-[9px] uppercase tracking-[0.35em] mb-5">
                                         Room Specifications
@@ -639,26 +619,6 @@ export default function ExperienceSection() {
                                         })}
                                     </div>
                                 </div>
-
-                                {/* Vertical pill dots — top-right, editorial style */}
-                                <div className="absolute top-4 right-4 flex flex-col gap-0.5 pointer-events-auto">
-                                    {aboutCarouselImages.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => setAboutIndex(i)}
-                                            aria-label={`View image ${i + 1}`}
-                                            aria-current={i === aboutIndex ? 'true' : undefined}
-                                            className="w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-coral/70"
-                                        >
-                                            <span className={cn(
-                                                "rounded-full transition-all duration-300 block",
-                                                i === aboutIndex
-                                                    ? "bg-coral w-1.5 h-5"
-                                                    : "bg-ocean-deep/20 hover:bg-ocean-deep/40 w-1.5 h-1.5"
-                                            )} />
-                                        </button>
-                                    ))}
-                                </div>
                             </div>
 
                         </div>
@@ -677,26 +637,31 @@ export default function ExperienceSection() {
                         <span className="text-[10px] uppercase tracking-[0.35em] text-ocean/30 font-medium">Everything Included</span>
                     </div>
 
-                    {/* — Amenities Marquee (single row) — */}
-                    <div className="pb-7 relative overflow-hidden">
-                        {/* Left/right fade masks */}
-                        <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-                        <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+                    {/* — Amenities scrollable row — */}
+                    <div className="pb-7 relative">
+                        {/* Fade masks — desktop only */}
+                        <div className="absolute inset-y-0 left-0 w-10 md:w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                        <div className="absolute inset-y-0 right-0 w-10 md:w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                        <Marquee pauseOnHover repeat={4}>
+                        <div
+                            className="flex flex-nowrap gap-0 overflow-x-auto px-5 md:px-10 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+                            role="list"
+                            aria-label="Included amenities"
+                        >
                             {allAmenities.map((amenity) => {
                                 const Icon = amenity.icon
                                 return (
                                     <div
                                         key={amenity.title}
-                                        className="flex items-center gap-2 mx-2.5 px-4 py-2 rounded-full bg-sand-light border border-sand-dark/20 hover:bg-sand hover:border-sand-dark/35 transition-all duration-200 cursor-default"
+                                        role="listitem"
+                                        className="flex-shrink-0 flex items-center gap-2 mx-2 px-4 py-2 rounded-full bg-sand-light border border-sand-dark/20 hover:bg-sand hover:border-sand-dark/35 transition-all duration-200 cursor-default"
                                     >
                                         <Icon className="w-3.5 h-3.5 flex-shrink-0 text-coral/70" strokeWidth={1.5} aria-hidden="true" />
                                         <span className="text-xs font-medium tracking-wide whitespace-nowrap text-ocean/70">{amenity.title}</span>
                                     </div>
                                 )
                             })}
-                        </Marquee>
+                        </div>
                     </div>
 
                     {/* — Safety row — */}
@@ -809,7 +774,7 @@ export default function ExperienceSection() {
 
                                 {/* Descriptor */}
                                 <p className="text-ocean/55 text-sm leading-relaxed max-w-sm mb-10">
-                                    Resort facilities are open to all guests. Pick the option that fits your stay — no hidden fees, no complications.
+                                    One pass unlocks <span className="text-ocean-deep font-semibold">all three</span> — pool, beach, and gym together. No separate fees, no restrictions.
                                 </p>
 
                                 {/* Tier split — no cards, editorial columns */}
