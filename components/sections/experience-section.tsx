@@ -20,19 +20,14 @@ import {
     Monitor,
     Shield,
     Ticket,
-    Calendar,
-    Sparkles,
-    Star,
-    Check,
+    Camera,
     LucideIcon
 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { AIRBNB_LISTING_URL } from '@/lib/constants'
 import { BlurFade } from '@/components/ui/blur-fade'
-import { TextAnimate } from '@/components/ui/text-animate'
-import { MagicCard } from '@/components/ui/magic-card'
-import { BorderBeam } from '@/components/ui/border-beam'
-import { DotPattern } from '@/components/ui/dot-pattern'
 import { NumberTicker } from '@/components/ui/number-ticker'
-import { AnimatedShinyText } from '@/components/ui/animated-shiny-text'
+import { Marquee } from '@/components/ui/marquee'
 import { cn } from '@/lib/utils'
 
 const STAGGER_DELAY = 0.1
@@ -318,6 +313,17 @@ const PremiumIcon = ({
     )
 }
 
+const resortAccessImages = [
+    { src: '/images/pool/photo-gallery-pool-1.jpg', alt: 'Resort swimming pool at Tambuli Seaside Living' },
+    { src: '/images/beach/photo-gallery-beach-1.jpg', alt: 'Private beach access at Tambuli Seaside Living' },
+    { src: '/images/pool/photo-gallery-pool-3.jpg', alt: 'Outdoor pool with sea view' },
+    { src: '/images/beach/photo-gallery-beach-3.jpg', alt: 'Beachfront shoreline at Tambuli' },
+    { src: '/images/gym/photo-gallery-gym-1.jpg', alt: 'Fully equipped fitness gym' },
+    { src: '/images/pool/photo-gallery-pool-5.jpg', alt: 'Pool lounge area at the resort' },
+    { src: '/images/beach/photo-gallery-beach-5.jpg', alt: 'Beach view from Tambuli Seaside Living' },
+    { src: '/images/gym/photo-gallery-gym-2.jpg', alt: 'Gym facilities and equipment' },
+]
+
 const aboutCarouselImages = [
     '/images/about/about-kitchen.jpg',
     '/images/studio/photo-gallery-studio-1.jpg',
@@ -338,6 +344,24 @@ export default function ExperienceSection() {
         const interval = setInterval(advanceAbout, 5000)
         return () => clearInterval(interval)
     }, [advanceAbout])
+
+    // Resort access carousel
+    const [resortIndex, setResortIndex] = useState(0)
+    const [resortHovered, setResortHovered] = useState(false)
+
+    const prevResort = useCallback(() => {
+        setResortIndex((prev) => (prev - 1 + resortAccessImages.length) % resortAccessImages.length)
+    }, [])
+
+    const nextResort = useCallback(() => {
+        setResortIndex((prev) => (prev + 1) % resortAccessImages.length)
+    }, [])
+
+    useEffect(() => {
+        if (resortHovered) return
+        const interval = setInterval(nextResort, 4000)
+        return () => clearInterval(interval)
+    }, [nextResort, resortHovered])
 
     const [activeGroupId, setActiveGroupId] = useState(galleryGroups[0].id)
     const [activeCategory, setActiveCategory] = useState(galleryGroups[0].categories[0].id)
@@ -398,316 +422,82 @@ export default function ExperienceSection() {
     return (
         <section id="experience" className="relative overflow-hidden" aria-label="Experience Section">
             {/* ================================ */}
-            {/* HERO INTRODUCTION */}
+            {/* EXPERIENCE INTRO + HIGHLIGHTS  */}
             {/* ================================ */}
-            <div className="relative bg-gradient-to-br from-ocean-deep via-ocean to-ocean-deep py-24 md:py-32">
-                {/* Dot Pattern Background */}
-                <DotPattern
-                    className={cn(
-                        "absolute inset-0 opacity-10",
-                        "[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
-                    )}
-                    cr={1.5}
-                    cx={1}
-                    cy={1}
-                />
-
-                {/* Decorative Blurs */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-40 -right-40 w-96 h-96 bg-coral/20 rounded-full blur-3xl" />
-                    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-ocean-light/20 rounded-full blur-3xl" />
-                </div>
-
-                <div className="relative max-w-7xl mx-auto px-5 md:px-10">
+            <div className="bg-white py-16 md:py-20 lg:py-24">
+                <div className="max-w-7xl mx-auto px-5 md:px-10">
                     <BlurFade delay={BASE_DELAY} inView>
-                        <div className="text-center">
-                            {/* Badge */}
-                            <div className="inline-flex items-center justify-center mb-6">
-                                <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 text-white text-sm font-medium transition ease-out">
-                                    <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
-                                    Tambuli Seaside Living, Cebu
-                                </AnimatedShinyText>
+                        <div className="max-w-2xl mb-14">
+                            <p className="text-ocean/35 text-[10px] uppercase tracking-[0.4em] mb-8 font-medium">
+                                The Experience · Tambuli Seaside Living, Cebu
+                            </p>
+                            <div className="leading-none mb-6">
+                                <span className="block font-display italic text-ocean-deep/20 text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-1 select-none">
+                                    Your Luxury
+                                </span>
+                                <span className="block font-display text-ocean-deep text-4xl md:text-5xl lg:text-6xl leading-[1.15] font-bold">
+                                    Escape at Tambuli.
+                                </span>
                             </div>
-
-                            {/* Title */}
-                            <TextAnimate
-                                animation="blurInUp"
-                                by="word"
-                                className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-6"
-                            >
-                                The Experience
-                            </TextAnimate>
-
-                            <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
-                                <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-                                    Your luxury escape in an 11-hectare residential resort community
-                                </p>
-                            </BlurFade>
+                            <div className="w-8 h-[2px] bg-coral mb-6" />
+                            <p className="text-ocean/55 text-base leading-relaxed">
+                                An 11-hectare residential resort community on the shores of Cebu — every amenity, every comfort, within reach.
+                            </p>
                         </div>
                     </BlurFade>
 
-                    {/* Featured Highlights - Premium Design */}
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
-                        {featuredHighlights.map((highlight, index) => (
-                            <BlurFade key={highlight.title} delay={BASE_DELAY + STAGGER_DELAY * (index + 2)} inView>
-                                <MagicCard
-                                    className="group relative p-8 bg-white rounded-3xl border border-sand-dark/10 cursor-default h-full shadow-lg hover:shadow-xl transition-shadow duration-300"
-                                    gradientColor="rgba(30, 77, 92, 0.08)"
-                                    gradientSize={200}
-                                >
-                                    {/* Feature Image */}
-                                    <div className="mb-6 relative w-32 h-32 rounded-2xl overflow-hidden border-2 shadow-lg group-hover:scale-105 transition-transform duration-300"
-                                        style={{
-                                            borderColor: highlight.accentColor,
-                                            boxShadow: `0 8px 32px ${highlight.glowColor}`
-                                        }}
+                    {/* Featured Highlights - Full-Bleed Image Cards (2×2 grid) */}
+                    <div className="grid md:grid-cols-2 gap-5 md:gap-6">
+                        {featuredHighlights.map((highlight, index) => {
+                            const isPersonalPhoto = index >= 2
+                            return (
+                                <BlurFade key={highlight.title} delay={BASE_DELAY + STAGGER_DELAY * (index + 2)} inView>
+                                    <div
+                                        className={cn(
+                                            "group relative overflow-hidden rounded-3xl cursor-default",
+                                            "shadow-xl hover:shadow-2xl transition-shadow duration-500",
+                                            isPersonalPhoto
+                                                ? "h-[380px] md:h-[500px]"
+                                                : "h-[300px] md:h-[400px]"
+                                        )}
                                     >
+                                        {/* Full-bleed image */}
                                         <Image
                                             src={highlight.image}
                                             alt={highlight.title}
                                             fill
-                                            className="object-cover"
-                                            sizes="128px"
-                                            priority
+                                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                            priority={index < 2}
                                         />
-                                    </div>
 
-                                    <h3 className="text-xl font-semibold text-ocean-deep mb-2">
-                                        {highlight.title}
-                                    </h3>
-                                    <p className="text-ocean/70 leading-relaxed">
-                                        {highlight.description}
-                                    </p>
-                                </MagicCard>
-                            </BlurFade>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                                        {/* Gradient overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/5 group-hover:from-black/70 transition-all duration-500" />
 
-            {/* ================================ */}
-            {/* ABOUT SECTION */}
-            {/* ================================ */}
-            <div className="bg-sand-light py-20 md:py-24">
-                <div className="max-w-7xl mx-auto px-5 md:px-10">
-                    <BlurFade delay={BASE_DELAY} inView>
-                        <div className="relative bg-white rounded-3xl shadow-xl overflow-hidden border border-sand-dark/10">
-                            <BorderBeam size={250} duration={12} delay={0} colorFrom="#E07A5F" colorTo="#1E4D5C" />
-
-                            <div className="grid lg:grid-cols-2">
-                                {/* Left - Content */}
-                                <div className="p-10 md:p-14 lg:p-16">
-                                    {/* Eyebrow Label */}
-                                    <p className="text-ocean/50 text-xs uppercase tracking-wider font-medium mb-4">
-                                        Your Stay
-                                    </p>
-
-                                    {/* Heading with coral accent bar */}
-                                    <h3 className="font-display text-3xl md:text-4xl text-ocean-deep mb-6 border-l-4 border-coral pl-4">
-                                        Welcome to Adam&apos;s Staycation
-                                    </h3>
-
-                                    {/* Description callout */}
-                                    <div className="bg-ocean-light/40 rounded-xl p-5 mb-8">
-                                        <p className="text-ocean/80 text-base leading-relaxed">
-                                            Your staycation is located at the <strong className="text-ocean-deep">Dita Building</strong> of
-                                            Tambuli Seaside Living in Lapu-Lapu City, Cebu. A fully-furnished studio
-                                            with resort-style amenities awaits you — here&apos;s how to get settled in.
-                                        </p>
-                                    </div>
-
-                                    {/* Check-in Steps */}
-                                    <div className="bg-sand/40 rounded-2xl p-6 space-y-5">
-                                        <div className="flex gap-4">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-9 h-9 rounded-full bg-coral flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md">
-                                                    1
-                                                </div>
-                                                <div className="w-px flex-1 bg-sand-dark/30 mt-2" />
+                                        {/* Personal collection badge */}
+                                        {isPersonalPhoto && (
+                                            <div className="absolute top-5 left-5 flex items-center gap-1.5 px-3 py-1.5 bg-white/15 backdrop-blur-sm rounded-full border border-white/25">
+                                                <Camera className="w-3.5 h-3.5 text-white" strokeWidth={2} aria-hidden="true" />
+                                                <span className="text-white text-xs font-medium tracking-wide">Personal Collection</span>
                                             </div>
-                                            <div className="pb-5">
-                                                <h4 className="font-semibold text-ocean-deep mb-1">Arrive at Tambuli</h4>
-                                                <p className="text-ocean/70 text-sm leading-relaxed">
-                                                    Head to the Dita Building entrance. Let the security guard know
-                                                    you&apos;re a booked guest for your scheduled stay.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-9 h-9 rounded-full bg-coral flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-md">
-                                                    2
-                                                </div>
-                                                <div className="w-px flex-1 bg-sand-dark/30 mt-2" />
-                                            </div>
-                                            <div className="pb-5">
-                                                <h4 className="font-semibold text-ocean-deep mb-1">Check In at the Lobby</h4>
-                                                <p className="text-ocean/70 text-sm leading-relaxed">
-                                                    Proceed to the front desk and sign in the log book. The host
-                                                    will verify your reservation details.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-9 h-9 rounded-full bg-ocean flex items-center justify-center flex-shrink-0 shadow-md">
-                                                    <Check className="w-5 h-5 text-white" aria-hidden="true" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h4 className="font-semibold text-ocean-deep mb-1">Settle Into Your Suite</h4>
-                                                <p className="text-ocean/70 text-sm leading-relaxed">
-                                                    Head up to your fully-furnished studio — it&apos;s open and
-                                                    ready for you. Make yourself at home!
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Right - Sliding Carousel + Room Specs */}
-                                <div className="flex flex-col">
-                                    {/* Image Carousel — 4/5 of right panel */}
-                                    <div className="relative flex-[4] min-h-[280px] lg:min-h-0 overflow-hidden">
-                                        <div
-                                            className="flex h-full transition-transform duration-700 ease-out"
-                                            style={{ transform: `translateX(-${aboutIndex * 100}%)` }}
-                                        >
-                                            {aboutCarouselImages.map((src, index) => (
-                                                <img
-                                                    key={src}
-                                                    src={src}
-                                                    alt=""
-                                                    className="w-full h-full object-cover flex-shrink-0"
-                                                />
-                                            ))}
-                                        </div>
-                                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ocean-deep/60 pointer-events-none" />
-                                    </div>
-
-                                    {/* Room Specs — 1/3 of right panel */}
-                                    <div className="bg-gradient-to-br from-ocean-deep to-ocean px-8 py-6 md:px-12 md:py-8 lg:px-14 lg:py-8 flex-1 flex flex-col justify-center">
-                                        <h4 className="text-white/60 text-xs uppercase tracking-wider mb-4 font-medium">
-                                            Room Specifications
-                                        </h4>
-                                        <div className="grid grid-cols-3 gap-3">
-                                            {roomSpecs.map((spec) => {
-                                                const Icon = spec.icon
-                                                return (
-                                                    <div key={spec.label} className="text-center">
-                                                        <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10 mx-auto mb-2">
-                                                            <Icon className="w-5 h-5 text-white" aria-hidden="true" />
-                                                        </div>
-                                                        <span className="text-2xl font-display text-white font-bold block">
-                                                            {spec.numericValue ? (
-                                                                <NumberTicker value={spec.numericValue} className="text-white" />
-                                                            ) : (
-                                                                spec.value
-                                                            )}
-                                                        </span>
-                                                        <p className="text-white/50 text-xs font-medium mt-0.5">{spec.label}</p>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </BlurFade>
-                </div>
-            </div>
-
-            {/* ================================ */}
-            {/* AMENITIES BENTO GRID */}
-            {/* ================================ */}
-            <div className="bg-white py-20 md:py-28">
-                <div className="max-w-7xl mx-auto px-5 md:px-10">
-                    <BlurFade delay={BASE_DELAY} inView>
-                        <div className="text-center mb-16">
-                            <span className="inline-block px-5 py-2 bg-ocean-light rounded-full text-ocean text-sm font-semibold mb-5 tracking-wide">
-                                Everything You Need
-                            </span>
-                            <TextAnimate
-                                animation="fadeIn"
-                                by="word"
-                                className="font-display text-3xl md:text-4xl lg:text-5xl text-ocean-deep font-bold"
-                            >
-                                What This Place Offers
-                            </TextAnimate>
-                        </div>
-                    </BlurFade>
-
-                    {/* Bento Grid Layout */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5">
-                        {allAmenities.map((amenity, index) => {
-                            const Icon = amenity.icon
-                            const isFeatured = amenity.size === 'featured'
-                            const accentColor = isFeatured ? '#1E4D5C' : '#1E4D5C'
-                            const glowColor = isFeatured ? 'rgba(30, 77, 92, 0.3)' : 'rgba(30, 77, 92, 0.15)'
-
-                            return (
-                                <BlurFade key={amenity.title} delay={BASE_DELAY + STAGGER_DELAY * index * 0.3} inView>
-                                    <MagicCard
-                                        className={cn(
-                                            "group relative rounded-2xl overflow-hidden transition-all duration-500 cursor-default h-full",
-                                            isFeatured
-                                                ? "bg-white hover:!bg-ocean-deep text-ocean-deep hover:!text-white col-span-2 row-span-2 p-8 border-2 border-ocean/20 hover:border-white/30 shadow-lg hover:shadow-2xl"
-                                                : "bg-sand-light hover:bg-white text-ocean-deep p-6 border border-sand-dark/20 hover:border-ocean/20"
                                         )}
-                                        gradientColor={isFeatured ? "transparent" : "rgba(30, 77, 92, 0.1)"}
-                                        gradientSize={isFeatured ? 0 : 150}
-                                    >
-                                        {/* Premium Icon Container */}
-                                        <div className={cn(
-                                            "flex items-center justify-center transition-transform duration-300 mb-4",
-                                            isFeatured ? "mb-5" : ""
-                                        )}>
-                                            {isFeatured ? (
-                                                <div
-                                                    className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-ocean/5 group-hover:bg-white/10 backdrop-blur-sm flex items-center justify-center border-2 border-ocean/20 group-hover:border-white/30 transition-all duration-500"
-                                                    style={{ boxShadow: '0 8px 32px rgba(30, 77, 92, 0.1)' }}
-                                                >
-                                                    <Icon className="w-8 h-8 md:w-10 md:h-10 text-ocean-deep group-hover:text-white transition-colors duration-500" strokeWidth={1.5} aria-hidden="true" />
-                                                </div>
-                                            ) : (
-                                                <div
-                                                    className="w-12 h-12 rounded-xl bg-white flex items-center justify-center border-2 transition-all duration-300 group-hover:scale-105"
-                                                    style={{
-                                                        borderColor: accentColor,
-                                                        boxShadow: `0 4px 16px ${glowColor}`
-                                                    }}
-                                                >
-                                                    <Icon
-                                                        className="w-6 h-6"
-                                                        style={{ color: accentColor }}
-                                                        strokeWidth={1.5}
-                                                        aria-hidden="true"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
 
-                                        {/* Content */}
-                                        <div className={isFeatured ? "space-y-2 relative z-10" : "space-y-1"}>
-                                            <h4 className={cn(
-                                                "font-semibold leading-tight transition-colors duration-500",
-                                                isFeatured ? "text-xl md:text-2xl mb-2" : "text-sm md:text-base"
-                                            )}>
-                                                {amenity.title}
-                                            </h4>
-                                            <p className={cn(
-                                                "leading-snug transition-colors duration-500",
-                                                isFeatured ? "text-ocean/70 group-hover:text-white/90 text-base" : "text-ocean/60 text-xs md:text-sm"
-                                            )}>
-                                                {amenity.description}
+                                        {/* Accent underline */}
+                                        <div
+                                            className="absolute bottom-0 left-0 right-0 h-[3px]"
+                                            style={{ backgroundColor: highlight.accentColor }}
+                                        />
+
+                                        {/* Text content */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-7 md:p-8">
+                                            <h3 className="font-display text-2xl md:text-3xl text-white font-bold mb-2 drop-shadow-lg leading-tight">
+                                                {highlight.title}
+                                            </h3>
+                                            <p className="text-white/75 text-sm md:text-base leading-relaxed">
+                                                {highlight.description}
                                             </p>
                                         </div>
-
-
-                                    </MagicCard>
+                                    </div>
                                 </BlurFade>
                             )
                         })}
@@ -716,280 +506,554 @@ export default function ExperienceSection() {
             </div>
 
             {/* ================================ */}
-            {/* SAFETY & SECURITY */}
+            {/* ABOUT SECTION — The Cebu Edit */}
             {/* ================================ */}
-            <div className="bg-sand-light py-20 md:py-24">
-                <div className="max-w-7xl mx-auto px-5 md:px-10">
+            <div className="relative bg-sand-light overflow-hidden">
+                <div className="max-w-7xl mx-auto">
                     <BlurFade delay={BASE_DELAY} inView>
-                        <MagicCard
-                            className="bg-white rounded-3xl p-10 md:p-14 border border-sand-dark/10"
-                            gradientColor="rgba(16, 185, 129, 0.1)"
-                            gradientSize={400}
-                        >
-                            <div className="flex flex-col lg:flex-row lg:items-center gap-10">
-                                <div className="lg:w-1/3">
-                                    <div
-                                        className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 border-2"
-                                        style={{
-                                            borderColor: '#10B981',
-                                            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
-                                        }}
-                                    >
-                                        <Shield className="w-8 h-8" style={{ color: '#10B981' }} strokeWidth={1.5} aria-hidden="true" />
-                                    </div>
-                                    <h3 className="font-display text-2xl md:text-3xl text-ocean-deep mb-3 font-bold">
-                                        Your Safety Matters
-                                    </h3>
-                                    <p className="text-ocean/70 leading-relaxed">
-                                        Essential safety features for your peace of mind during your stay.
-                                    </p>
-                                </div>
+                        <div className="grid lg:grid-cols-2 min-h-[680px] lg:gap-6">
 
-                                <div className="lg:w-2/3">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {safetyFeatures.map((feature, index) => (
-                                            <BlurFade key={feature} delay={BASE_DELAY + STAGGER_DELAY * index * 0.5} inView>
-                                                <div className="flex items-center gap-3 p-4 bg-sand-light hover:bg-emerald-50/50 rounded-xl transition-colors duration-300 border border-sand-dark/10">
-                                                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                                                        <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
-                                                    </div>
-                                                    <span className="text-ocean-deep text-sm font-medium">{feature}</span>
-                                                </div>
-                                            </BlurFade>
-                                        ))}
+                            {/* ── Left: Editorial Content ── */}
+                            <div className="px-8 py-16 md:px-12 md:py-20 lg:px-16 lg:py-24 flex flex-col justify-center">
+
+                                {/* Location chain — ultra-fine tracking */}
+                                <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 0.5} inView>
+                                    <p className="text-ocean/40 text-[10px] uppercase tracking-[0.4em] mb-10 font-medium">
+                                        Dita Building&nbsp;·&nbsp;Tambuli Seaside Living&nbsp;·&nbsp;Lapu&#8209;Lapu City, Cebu
+                                    </p>
+                                </BlurFade>
+
+                                {/* Split heading: italic ghost + solid bold */}
+                                <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
+                                    <div className="mb-8 leading-none">
+                                        <span className="block font-display italic text-ocean-deep/20 text-4xl md:text-5xl lg:text-[3.25rem] leading-[1.1] mb-1 select-none">
+                                            Welcome to
+                                        </span>
+                                        <span className="block font-display text-ocean-deep text-4xl md:text-5xl lg:text-[3.25rem] leading-[1.1] font-bold">
+                                            Adam&apos;s Staycation
+                                        </span>
                                     </div>
+                                </BlurFade>
+
+                                {/* Coral rule */}
+                                <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 1.5} inView>
+                                    <div className="w-10 h-[2px] bg-coral mb-8" />
+                                </BlurFade>
+
+                                {/* Description */}
+                                <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 2} inView>
+                                    <p className="text-ocean/60 text-[15px] leading-relaxed max-w-sm mb-14">
+                                        A fully-furnished studio in Cebu&apos;s premier 11-hectare seaside resort
+                                        community. Resort-style amenities, personal touches, everything you need.
+                                    </p>
+                                </BlurFade>
+
+                                {/* Editorial steps — large watermark numbers, no circles */}
+                                <div className="space-y-9">
+                                    {[
+                                        {
+                                            title: "Arrive at Tambuli",
+                                            body: "Head to the Dita Building entrance. Let the security guard know you're a booked guest for your scheduled stay.",
+                                        },
+                                        {
+                                            title: "Check In at the Lobby",
+                                            body: "Proceed to the front desk and sign in the log book. The host will verify your reservation details.",
+                                        },
+                                        {
+                                            title: "Settle Into Your Suite",
+                                            body: "Head up to your fully-furnished studio — it's open and ready for you. Make yourself at home!",
+                                        },
+                                    ].map((step, i) => (
+                                        <BlurFade key={step.title} delay={BASE_DELAY + STAGGER_DELAY * (3 + i)} inView>
+                                            <div className="relative flex gap-6 group">
+                                                {/* Number column */}
+                                                <div className="relative flex-shrink-0 w-12 flex flex-col items-start">
+                                                    {/* Giant watermark */}
+                                                    <span className="absolute -top-4 -left-1 font-display text-[5rem] font-bold text-ocean-deep/[0.05] leading-none select-none pointer-events-none">
+                                                        {String(i + 1).padStart(2, '0')}
+                                                    </span>
+                                                    {/* Readable small number */}
+                                                    <span className="relative z-10 text-coral text-xs font-semibold tracking-[0.25em] mt-1">
+                                                        {String(i + 1).padStart(2, '0')}
+                                                    </span>
+                                                    {/* Vertical connector */}
+                                                    {i < 2 && (
+                                                        <div className="absolute top-5 left-[5px] w-px bg-ocean/10" style={{ height: 'calc(100% + 2.25rem)' }} />
+                                                    )}
+                                                </div>
+
+                                                {/* Content */}
+                                                <div>
+                                                    <h4 className="text-ocean-deep font-semibold text-sm mb-1.5 group-hover:text-coral transition-colors duration-300">
+                                                        {step.title}
+                                                    </h4>
+                                                    <p className="text-ocean/50 text-sm leading-relaxed">
+                                                        {step.body}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </BlurFade>
+                                    ))}
                                 </div>
                             </div>
-                        </MagicCard>
+
+                            {/* ── Right: Full-bleed Carousel ── */}
+                            <div className="relative min-h-[460px] lg:min-h-0 overflow-hidden lg:rounded-l-2xl">
+                                {/* Slide strip */}
+                                <div
+                                    className="flex h-full transition-transform duration-700 ease-out"
+                                    style={{ transform: `translateX(-${aboutIndex * 100}%)` }}
+                                >
+                                    {aboutCarouselImages.map((src) => (
+                                        <img
+                                            key={src}
+                                            src={src}
+                                            alt=""
+                                            className="w-full h-full object-cover flex-shrink-0"
+                                        />
+                                    ))}
+                                </div>
+
+
+                                {/* Room specs — dark gradient overlay over photo */}
+                                <div className="absolute bottom-0 left-0 right-0 pt-20 pb-8 px-8 md:px-10 bg-gradient-to-t from-ocean-deep/95 via-ocean-deep/60 to-transparent pointer-events-none">
+                                    <p className="text-white/25 text-[9px] uppercase tracking-[0.35em] mb-5">
+                                        Room Specifications
+                                    </p>
+                                    <div className="flex items-center gap-8 md:gap-10">
+                                        {roomSpecs.map((spec) => {
+                                            const Icon = spec.icon
+                                            return (
+                                                <div key={spec.label} className="flex items-center gap-3">
+                                                    <Icon className="w-4 h-4 text-coral flex-shrink-0" strokeWidth={1.5} aria-hidden="true" />
+                                                    <div>
+                                                        <p className="font-display text-white text-2xl font-bold leading-none">
+                                                            {spec.numericValue ? (
+                                                                <NumberTicker value={spec.numericValue} className="text-white" />
+                                                            ) : spec.value}
+                                                        </p>
+                                                        <p className="text-white/35 text-[11px] mt-0.5 tracking-wide">{spec.label}</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Vertical pill dots — top-right, editorial style */}
+                                <div className="absolute top-4 right-4 flex flex-col gap-0.5 pointer-events-auto">
+                                    {aboutCarouselImages.map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setAboutIndex(i)}
+                                            aria-label={`View image ${i + 1}`}
+                                            aria-current={i === aboutIndex ? 'true' : undefined}
+                                            className="w-8 h-8 flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-coral/70"
+                                        >
+                                            <span className={cn(
+                                                "rounded-full transition-all duration-300 block",
+                                                i === aboutIndex
+                                                    ? "bg-coral w-1.5 h-5"
+                                                    : "bg-ocean-deep/20 hover:bg-ocean-deep/40 w-1.5 h-1.5"
+                                            )} />
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
                     </BlurFade>
                 </div>
             </div>
 
             {/* ================================ */}
-            {/* RESORT ACCESS PROMO */}
+            {/* ESSENTIALS STRIP                */}
             {/* ================================ */}
-            <div className="bg-white py-20 md:py-24">
-                <div className="max-w-7xl mx-auto px-5 md:px-10">
-                    <BlurFade delay={BASE_DELAY} inView>
-                        <div className="text-center mb-14">
-                            <AnimatedShinyText className="inline-block px-5 py-2 bg-coral/10 rounded-full text-coral text-sm font-semibold mb-5 tracking-wide">
-                                <Sparkles className="w-4 h-4 inline mr-2" aria-hidden="true" />
-                                Special Offer
-                            </AnimatedShinyText>
-                            <TextAnimate
-                                animation="fadeIn"
-                                by="word"
-                                className="font-display text-3xl md:text-4xl lg:text-5xl text-ocean-deep font-bold"
-                            >
-                                Resort Amenities Access
-                            </TextAnimate>
-                        </div>
-                    </BlurFade>
+            <div className="bg-white border-t border-sand-dark/10">
+                <BlurFade delay={BASE_DELAY} inView>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {/* Extended Stay - Featured */}
-                        <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
-                            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-coral via-coral to-orange-500 p-10 md:p-12 text-white shadow-2xl shadow-coral/30">
-                                <BorderBeam size={200} duration={10} colorFrom="#ffffff" colorTo="#ffffff" />
+                    {/* — Section label — */}
+                    <div className="pt-8 pb-5 text-center">
+                        <span className="text-[10px] uppercase tracking-[0.35em] text-ocean/30 font-medium">Everything Included</span>
+                    </div>
 
-                                {/* Decorative circles */}
-                                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+                    {/* — Amenities Marquee (single row) — */}
+                    <div className="pb-7 relative overflow-hidden">
+                        {/* Left/right fade masks */}
+                        <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                        <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                                <div className="relative">
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-6 border border-white/20">
-                                        <Sparkles className="w-4 h-4" aria-hidden="true" />
-                                        Best Value
-                                    </div>
-                                    <h4 className="text-3xl md:text-4xl font-display mb-4 font-bold">Extended Stay Promo</h4>
-                                    <p className="text-white/95 text-lg mb-8 max-w-md leading-relaxed">
-                                        Book for a <strong className="text-white font-bold">minimum of 3 weeks</strong> (negotiable) and enjoy <strong className="text-white font-bold">FREE access</strong> to all resort amenities!
-                                    </p>
-                                    <div className="flex items-center gap-3 p-4 bg-white/15 backdrop-blur-sm rounded-xl border border-white/20">
-                                        <Calendar className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
-                                        <span className="font-semibold text-base">3+ Weeks = FREE Resort Access</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </BlurFade>
-
-                        {/* Day Pass */}
-                        <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 2} inView>
-                            <MagicCard
-                                className="relative overflow-hidden rounded-3xl bg-sand-light border-2 border-sand-dark/20 p-10 md:p-12 h-full"
-                                gradientColor="rgba(30, 77, 92, 0.1)"
-                                gradientSize={300}
-                            >
-                                <div className="flex items-start gap-5 mb-8">
+                        <Marquee pauseOnHover repeat={4}>
+                            {allAmenities.map((amenity) => {
+                                const Icon = amenity.icon
+                                return (
                                     <div
-                                        className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center border-2"
-                                        style={{
-                                            borderColor: '#1E4D5C',
-                                            boxShadow: '0 8px 32px rgba(30, 77, 92, 0.2)'
-                                        }}
+                                        key={amenity.title}
+                                        className="flex items-center gap-2 mx-2.5 px-4 py-2 rounded-full bg-sand-light border border-sand-dark/20 hover:bg-sand hover:border-sand-dark/35 transition-all duration-200 cursor-default"
                                     >
-                                        <Ticket className="w-8 h-8 text-ocean" strokeWidth={1.5} aria-hidden="true" />
+                                        <Icon className="w-3.5 h-3.5 flex-shrink-0 text-coral/70" strokeWidth={1.5} aria-hidden="true" />
+                                        <span className="text-xs font-medium tracking-wide whitespace-nowrap text-ocean/70">{amenity.title}</span>
                                     </div>
-                                    <div>
-                                        <h4 className="text-2xl font-display text-ocean-deep mb-1 font-bold">Day Use Passes</h4>
-                                        <p className="text-ocean/60 font-medium">For short-term stays</p>
+                                )
+                            })}
+                        </Marquee>
+                    </div>
+
+                    {/* — Safety row — */}
+                    <div className="border-t border-sand-dark/10 py-4 px-5 md:px-10">
+                        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <Shield className="w-3.5 h-3.5 text-ocean/35" strokeWidth={1.5} aria-hidden="true" />
+                                <span className="text-[10px] uppercase tracking-[0.25em] text-ocean/30 font-medium">Safety</span>
+                            </div>
+                            {safetyFeatures.map((feature, i) => (
+                                <span key={feature} className="text-[11px] text-ocean/40 whitespace-nowrap">
+                                    {feature}{i < safetyFeatures.length - 1 && (
+                                        <span className="ml-6 text-ocean/20" aria-hidden="true">·</span>
+                                    )}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                </BlurFade>
+            </div>
+
+            {/* ================================ */}
+            {/* RESORT ACCESS                   */}
+            {/* ================================ */}
+            <div className="bg-sand-light overflow-hidden">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid lg:grid-cols-12 min-h-[580px] md:min-h-[620px] lg:gap-6">
+
+                        {/* Left — Auto-play carousel */}
+                        <div
+                            className="lg:col-span-5 relative min-h-[360px] lg:min-h-0 order-2 lg:order-1 overflow-hidden lg:rounded-r-2xl"
+                            onMouseEnter={() => setResortHovered(true)}
+                            onMouseLeave={() => setResortHovered(false)}
+                        >
+                            {/* Slides track */}
+                            <div
+                                className="absolute inset-0 flex transition-transform duration-700 ease-out"
+                                style={{ transform: `translateX(-${resortIndex * 100}%)` }}
+                            >
+                                {resortAccessImages.map((img) => (
+                                    <div key={img.src} className="relative flex-shrink-0 w-full h-full">
+                                        <Image
+                                            src={img.src}
+                                            alt={img.alt}
+                                            fill
+                                            className="object-cover"
+                                            sizes="(max-width: 1024px) 100vw, 42vw"
+                                        />
                                     </div>
-                                </div>
-                                <p className="text-ocean/70 mb-8 leading-relaxed">
-                                    Enjoy all resort amenities including pools, beach, and gym facilities with convenient day use passes.
+                                ))}
+                            </div>
+
+
+                            {/* Bottom scrim */}
+                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/55 to-transparent z-10 pointer-events-none" />
+
+                            {/* Prev arrow */}
+                            <button
+                                onClick={prevResort}
+                                aria-label="Previous image"
+                                className={cn(
+                                    "absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 backdrop-blur-sm border border-white/25 text-white transition-all duration-200 hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40",
+                                    resortHovered ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 pointer-events-none"
+                                )}
+                            >
+                                <ChevronLeft className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+                            </button>
+
+                            {/* Next arrow */}
+                            <button
+                                onClick={nextResort}
+                                aria-label="Next image"
+                                className={cn(
+                                    "absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-white/15 backdrop-blur-sm border border-white/25 text-white transition-all duration-200 hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/40",
+                                    resortHovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2 pointer-events-none"
+                                )}
+                            >
+                                <ChevronRight className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+                            </button>
+
+                            {/* Floating badge */}
+                            <div className="absolute bottom-5 left-5 z-20 flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full border border-white/25">
+                                <Waves className="w-3.5 h-3.5 text-white" strokeWidth={1.5} aria-hidden="true" />
+                                <span className="text-white text-xs font-medium tracking-wide">Pool · Beach · Gym</span>
+                            </div>
+                        </div>
+
+                        {/* Right — Editorial content */}
+                        <div className="lg:col-span-7 px-8 py-14 md:px-12 md:py-16 lg:px-16 lg:py-20 flex flex-col justify-center order-1 lg:order-2">
+                            <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
+
+                                {/* Label */}
+                                <p className="text-ocean/35 text-[10px] uppercase tracking-[0.4em] mb-8 font-medium">
+                                    Resort Amenities Access
                                 </p>
-                                <div className="flex items-baseline gap-2 p-6 bg-white rounded-2xl border border-sand-dark/20 shadow-sm">
-                                    <span className="text-5xl font-display text-ocean-deep font-bold">
-                                        ₱<NumberTicker value={900} className="text-ocean-deep" />
+
+                                {/* Heading — same editorial pattern as About */}
+                                <div className="mb-6 leading-none">
+                                    <span className="block font-display italic text-ocean-deep/20 text-3xl md:text-4xl lg:text-[2.75rem] leading-[1.15] mb-1 select-none">
+                                        Pool. Beach. Gym.
                                     </span>
-                                    <span className="text-ocean/60 font-medium">/ person / day</span>
+                                    <span className="block font-display text-ocean-deep text-3xl md:text-4xl lg:text-[2.75rem] leading-[1.15] font-bold">
+                                        Access on Your Terms.
+                                    </span>
                                 </div>
-                            </MagicCard>
-                        </BlurFade>
+
+                                {/* Coral rule */}
+                                <div className="w-8 h-[2px] bg-coral mb-7" />
+
+                                {/* Descriptor */}
+                                <p className="text-ocean/55 text-sm leading-relaxed max-w-sm mb-10">
+                                    Resort facilities are open to all guests. Pick the option that fits your stay — no hidden fees, no complications.
+                                </p>
+
+                                {/* Tier split — no cards, editorial columns */}
+                                <div className="grid grid-cols-2 mb-10">
+
+                                    {/* Short stay */}
+                                    <div className="pr-8 border-r border-ocean/10">
+                                        <p className="text-[9px] uppercase tracking-[0.35em] text-ocean/35 font-medium mb-4">Day Pass</p>
+                                        <p className="font-display text-[2rem] text-ocean-deep font-bold leading-none mb-1">
+                                            &#8369;900
+                                        </p>
+                                        <p className="text-[11px] text-ocean/40 mb-4">per person / per day</p>
+                                        <p className="text-xs text-ocean/40 leading-relaxed">
+                                            Vouchers available at check-in.<br />Ideal for 1–7 day bookings.
+                                        </p>
+                                    </div>
+
+                                    {/* Long stay */}
+                                    <div className="pl-8">
+                                        <p className="text-[9px] uppercase tracking-[0.35em] text-ocean/35 font-medium mb-4">Long Stay</p>
+                                        <p className="font-display italic text-[1.6rem] text-coral font-medium leading-none mb-1">
+                                            Complimentary
+                                        </p>
+                                        <p className="text-[11px] text-ocean/40 mb-4">from 3 weeks onward</p>
+                                        <p className="text-xs text-ocean/40 leading-relaxed">
+                                            Full resort access included.<br />Terms negotiable.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                {/* CTA */}
+                                <a
+                                    href={AIRBNB_LISTING_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-ocean/20 text-ocean text-sm font-medium hover:bg-ocean hover:text-white hover:border-ocean transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-ocean/40 w-fit"
+                                    aria-label="Check availability on Airbnb"
+                                >
+                                    <Ticket className="w-4 h-4 flex-shrink-0" strokeWidth={1.5} aria-hidden="true" />
+                                    Check Availability
+                                </a>
+
+                            </BlurFade>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
             {/* ================================ */}
-            {/* PHOTO GALLERY */}
+            {/* PHOTO GALLERY                   */}
             {/* ================================ */}
-            <div className="bg-ocean-deep py-20 md:py-24">
+            <div className="bg-white py-16 md:py-20 border-t border-sand-dark/10">
                 <div className="max-w-7xl mx-auto px-5 md:px-10">
+
+                    {/* Header row: editorial label + heading + group toggle */}
                     <BlurFade delay={BASE_DELAY} inView>
-                        <div className="text-center mb-12">
-                            <TextAnimate
-                                animation="blurInUp"
-                                by="word"
-                                className="font-display text-3xl md:text-4xl lg:text-5xl text-white mb-4 font-bold"
-                            >
+                        <div className="mb-10">
+                            <p className="text-ocean/35 text-[10px] uppercase tracking-[0.4em] mb-8 font-medium">
                                 Photo Gallery
-                            </TextAnimate>
-                            <p className="text-white/70 text-lg max-w-2xl mx-auto">
-                                Explore every corner of your future staycation
                             </p>
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-6">
+                                <div className="leading-none">
+                                    <span className="block font-display italic text-ocean-deep/20 text-3xl md:text-[2.5rem] leading-[1.15] mb-1 select-none">
+                                        Every Corner.
+                                    </span>
+                                    <span className="block font-display text-ocean-deep text-3xl md:text-[2.5rem] leading-[1.15] font-bold">
+                                        Every Detail.
+                                    </span>
+                                </div>
+
+                                {/* Group toggle — right-aligned */}
+                                <div
+                                    className="inline-flex self-start sm:self-auto bg-white border border-sand-dark/15 rounded-xl p-1 shadow-sm flex-shrink-0"
+                                    role="tablist"
+                                    aria-label="Gallery groups"
+                                >
+                                    {galleryGroups.map((group) => (
+                                        <motion.button
+                                            key={group.id}
+                                            onClick={() => handleGroupChange(group.id)}
+                                            role="tab"
+                                            aria-selected={activeGroupId === group.id}
+                                            whileTap={{ scale: 0.95 }}
+                                            transition={{ duration: 0.1, ease: 'easeOut' }}
+                                            className={cn(
+                                                "px-5 py-2.5 min-h-[44px] flex items-center rounded-lg text-sm font-semibold transition-all duration-250 cursor-pointer",
+                                                activeGroupId === group.id
+                                                    ? "bg-ocean-deep text-white shadow-md"
+                                                    : "text-ocean/50 hover:text-ocean"
+                                            )}
+                                        >
+                                            {group.title}
+                                        </motion.button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="w-8 h-[2px] bg-coral" />
                         </div>
                     </BlurFade>
 
-                    {/* Group Tabs */}
+                    {/* Category pills — left-aligned, light style */}
                     <BlurFade delay={BASE_DELAY + STAGGER_DELAY} inView>
-                        <div className="flex justify-center mb-6">
-                            <div className="inline-flex rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 p-1.5" role="tablist" aria-label="Gallery groups">
-                                {galleryGroups.map((group) => (
-                                    <button
-                                        key={group.id}
-                                        onClick={() => handleGroupChange(group.id)}
+                        <div
+                            className="flex flex-wrap gap-2 mb-8"
+                            role="tablist"
+                            aria-label="Gallery categories"
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {activeGroup.categories.map((category) => (
+                                    <motion.button
+                                        key={category.id}
+                                        layout
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        whileTap={{ scale: 0.92 }}
+                                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                                        onClick={() => setActiveCategory(category.id)}
                                         role="tab"
-                                        aria-selected={activeGroupId === group.id}
+                                        aria-selected={activeCategory === category.id}
                                         className={cn(
-                                            "px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-semibold text-sm md:text-base transition-all duration-300",
-                                            activeGroupId === group.id
-                                                ? "bg-white text-ocean-deep shadow-lg shadow-white/20"
-                                                : "text-white/70 hover:text-white hover:bg-white/10"
+                                            "px-4 py-2.5 min-h-[44px] flex items-center rounded-full text-xs font-medium cursor-pointer transition-colors duration-200",
+                                            activeCategory === category.id
+                                                ? "bg-coral text-white shadow-sm shadow-coral/20"
+                                                : "bg-white text-ocean/50 hover:text-ocean border border-sand-dark/15 hover:border-sand-dark/30"
                                         )}
                                     >
-                                        {group.title}
-                                    </button>
+                                        {category.title}
+                                    </motion.button>
                                 ))}
-                            </div>
+                            </AnimatePresence>
                         </div>
                     </BlurFade>
 
-                    {/* Category Pills */}
+                    {/* Gallery — main image + thumbnail strip */}
                     <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 1.5} inView>
-                        <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-10" role="tablist" aria-label="Gallery categories">
-                            {activeGroup.categories.map((category) => (
-                                <button
-                                    key={category.id}
-                                    onClick={() => setActiveCategory(category.id)}
-                                    role="tab"
-                                    aria-selected={activeCategory === category.id}
-                                    className={cn(
-                                        "px-5 py-2 md:px-6 md:py-2.5 rounded-full text-sm font-medium transition-all duration-300",
-                                        activeCategory === category.id
-                                            ? "bg-coral text-white shadow-lg shadow-coral/30"
-                                            : "bg-white/10 text-white/80 hover:bg-white/20 border border-white/10"
-                                    )}
-                                >
-                                    {category.title}
-                                </button>
-                            ))}
-                        </div>
-                    </BlurFade>
-
-                    {/* Gallery Carousel */}
-                    <BlurFade delay={BASE_DELAY + STAGGER_DELAY * 2} inView>
                         <div
-                            className="relative rounded-3xl overflow-hidden group"
+                            className="grid grid-cols-1 lg:grid-cols-[1fr_185px] gap-3"
                             role="tabpanel"
                             id={`gallery-panel-${activeCategory}`}
                             aria-label={`${activeGallery.title} gallery`}
                         >
+                            {/* Main image */}
                             <div
-                                className="aspect-[3/4] md:aspect-[16/9] relative bg-ocean"
+                                className="relative aspect-[4/3] md:aspect-[16/10] rounded-2xl overflow-hidden group bg-sand shadow-lg shadow-ocean/8"
                                 onTouchStart={handleTouchStart}
                                 onTouchEnd={handleTouchEnd}
                             >
-                                <img
-                                    key={`${activeCategory}-${currentImageIndex}`}
-                                    src={activeGallery.images[currentImageIndex].src}
-                                    alt={activeGallery.images[currentImageIndex].alt}
-                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-                                />
+                                <AnimatePresence>
+                                    <motion.img
+                                        key={`${activeCategory}-${currentImageIndex}`}
+                                        src={activeGallery.images[currentImageIndex].src}
+                                        alt={activeGallery.images[currentImageIndex].alt}
+                                        initial={{ opacity: 0, scale: 1.04 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        whileHover={{ scale: 1.04 }}
+                                        transition={{
+                                            opacity: { duration: 0.4, ease: 'easeOut' },
+                                            scale: { duration: 0.65, ease: 'easeOut', type: 'tween' },
+                                        }}
+                                        className="absolute inset-0 w-full h-full object-cover cursor-zoom-in"
+                                    />
+                                </AnimatePresence>
 
-                                {/* Gradient overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-ocean-deep/70 via-transparent to-transparent" />
+                                {/* Gradient scrim */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
 
-                                {/* Image info */}
-                                <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+                                {/* Image caption + counter */}
+                                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 flex items-end justify-between pointer-events-none">
                                     <div>
-                                        <h4 className="text-white font-semibold text-lg mb-1">{activeGallery.title}</h4>
-                                        <p className="text-white/80 text-sm hidden md:block">{activeGallery.description}</p>
+                                        <h4 className="text-white font-semibold text-sm drop-shadow mb-0.5">
+                                            {activeGallery.title}
+                                        </h4>
+                                        <p className="text-white/65 text-xs hidden md:block drop-shadow leading-snug">
+                                            {activeGallery.description}
+                                        </p>
                                     </div>
-                                    <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium border border-white/10 hidden md:block">
+                                    <span className="text-white/75 text-[11px] font-medium bg-black/25 backdrop-blur-sm px-2.5 py-1 rounded-full hidden md:block">
                                         {currentImageIndex + 1} / {activeGallery.images.length}
-                                    </div>
+                                    </span>
                                 </div>
+
+                                {/* Prev / Next arrows */}
+                                {activeGallery.images.length > 1 && (
+                                    <>
+                                        <motion.button
+                                            onClick={handlePrevImage}
+                                            whileHover={{ scale: 1.08 }}
+                                            whileTap={{ scale: 0.88 }}
+                                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                                            className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/92 backdrop-blur-sm flex items-center justify-center text-ocean-deep opacity-0 group-hover:opacity-100 transition-opacity duration-250 shadow-md focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-ocean/30 cursor-pointer"
+                                            aria-label="Previous image"
+                                        >
+                                            <ChevronLeft className="w-5 h-5" strokeWidth={2} />
+                                        </motion.button>
+                                        <motion.button
+                                            onClick={handleNextImage}
+                                            whileHover={{ scale: 1.08 }}
+                                            whileTap={{ scale: 0.88 }}
+                                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/92 backdrop-blur-sm flex items-center justify-center text-ocean-deep opacity-0 group-hover:opacity-100 transition-opacity duration-250 shadow-md focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-ocean/30 cursor-pointer"
+                                            aria-label="Next image"
+                                        >
+                                            <ChevronRight className="w-5 h-5" strokeWidth={2} />
+                                        </motion.button>
+                                    </>
+                                )}
                             </div>
 
-                            {/* Navigation */}
-                            {activeGallery.images.length > 1 && (
-                                <>
-                                    <button
-                                        onClick={handlePrevImage}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-sm items-center justify-center text-ocean-deep opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-xl focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white hidden md:flex"
-                                        aria-label="Previous image"
+                            {/* Thumbnail strip — vertical on desktop, horizontal scroll on mobile */}
+                            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto lg:max-h-[500px] [&::-webkit-scrollbar]:w-0 [scrollbar-width:none]">
+                                {activeGallery.images.map((img, i) => (
+                                    <motion.button
+                                        key={i}
+                                        onClick={() => handleDotClick(i)}
+                                        whileTap={{ scale: 0.94 }}
+                                        transition={{ duration: 0.12, ease: 'easeOut' }}
+                                        aria-label={`View image ${i + 1} of ${activeGallery.images.length}`}
+                                        aria-current={i === currentImageIndex ? 'true' : undefined}
+                                        className={cn(
+                                            "relative flex-shrink-0 w-20 h-14 lg:w-full lg:h-auto lg:aspect-[4/3]",
+                                            "rounded-xl overflow-hidden cursor-pointer transition-all duration-200",
+                                            "focus:outline-none focus:ring-2 focus:ring-coral focus:ring-offset-2 focus:ring-offset-white",
+                                            i === currentImageIndex
+                                                ? "ring-2 ring-coral ring-offset-2 ring-offset-white opacity-100"
+                                                : "opacity-50 hover:opacity-85"
+                                        )}
                                     >
-                                        <ChevronLeft className="w-6 h-6" />
-                                    </button>
-                                    <button
-                                        onClick={handleNextImage}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-sm items-center justify-center text-ocean-deep opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-xl focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white hidden md:flex"
-                                        aria-label="Next image"
-                                    >
-                                        <ChevronRight className="w-6 h-6" />
-                                    </button>
+                                        <img
+                                            src={img.src}
+                                            alt=""
+                                            aria-hidden="true"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </motion.button>
+                                ))}
+                            </div>
 
-                                    {/* Dots */}
-                                    <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2" role="group" aria-label="Gallery image navigation">
-                                        {activeGallery.images.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => handleDotClick(index)}
-                                                aria-current={index === currentImageIndex ? 'true' : undefined}
-                                                aria-label={`Image ${index + 1} of ${activeGallery.images.length}`}
-                                                className={cn(
-                                                    "h-2 rounded-full transition-all duration-300",
-                                                    index === currentImageIndex
-                                                        ? "bg-white w-8"
-                                                        : "bg-white/40 hover:bg-white/60 w-2"
-                                                )}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
                         </div>
                     </BlurFade>
+
                 </div>
             </div>
         </section>

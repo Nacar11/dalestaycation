@@ -120,7 +120,7 @@ export default function Navbar() {
                     {/* Mobile Menu Button */}
                     <button
                         className={cn(
-                            "md:hidden p-2 transition-colors duration-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral",
+                            "md:hidden p-3 transition-colors duration-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral",
                             isScrolled ? "text-ocean-deep" : "text-white"
                         )}
                         onClick={() => setIsMobileMenuOpen(true)}
